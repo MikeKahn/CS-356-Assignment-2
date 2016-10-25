@@ -1,5 +1,6 @@
 package com.github.MikeKahn.core;
 
+import javax.swing.tree.DefaultMutableTreeNode;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -13,7 +14,7 @@ public class User extends Node {
     private HashSet<String> followers;
     private HashSet<Message> messages;
 
-    public User(String id, Node parent, ArrayList<Node> children) {
+    public User(String id, DefaultMutableTreeNode parent, ArrayList<Node> children) {
         super(id, parent, children);
     }
 

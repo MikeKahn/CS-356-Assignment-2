@@ -2,15 +2,20 @@ package com.github.MikeKahn.core;
 
 /**
  * Created by Michael on 10/25/2016.
+ *
  */
 public class Message {
 
-    public final long timeStamp;
-    public final String content;
+    final long timeStamp;
+    final String content;
 
     public Message(String content) {
         timeStamp = System.nanoTime();
         this.content = content;
     }
 
+    @Override
+    public String toString() {
+        return "[" + timeStamp + "]" + content;
+    }
 }
