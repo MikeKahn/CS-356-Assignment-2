@@ -1,7 +1,6 @@
 package com.github.MikeKahn.core;
 
 import javax.swing.*;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -17,8 +16,8 @@ public class UserControlGUI extends JFrame {
     private JTextField fieldTweet;
     private JButton postButton;
     private JTextField fieldUserID;
-    private JList listFollowing;
-    private JList listFeed;
+    private JList<String> listFollowing;
+    private JList<String> listFeed;
 
     private DefaultListModel<String> msgModel;
 
@@ -51,6 +50,7 @@ public class UserControlGUI extends JFrame {
             String id = fieldUserID.getText().trim();
             if(!id.isEmpty()) { //check if user ID field is empty
                 user.follow(id,model);
+                fieldUserID.setText(""); //clear input
             }
         });
 
@@ -58,23 +58,26 @@ public class UserControlGUI extends JFrame {
             String id = fieldUserID.getText().trim();
             if(!id.isEmpty()) { //check if user ID field is empty
                 user.follow(id, model);
+                fieldUserID.setText(""); //clear input
             }
         });
 
         fieldTweet.addActionListener(e -> { //enter is pressed
             if(!fieldTweet.getText().isEmpty()) {
                 user.postMessage(fieldTweet.getText());
+                fieldTweet.setText(""); //clear input
             }
         });
 
         postButton.addActionListener(e -> {
             if(!fieldTweet.getText().isEmpty()) {
                 user.postMessage(fieldTweet.getText());
+                fieldTweet.setText(""); //clear input
             }
         });
     }
 
-    public DefaultListModel getModel() {
+    DefaultListModel<String> getModel() {
         return msgModel;
     }
 }

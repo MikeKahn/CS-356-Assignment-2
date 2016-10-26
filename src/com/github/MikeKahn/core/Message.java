@@ -6,12 +6,12 @@ package com.github.MikeKahn.core;
  */
 public class Message {
 
-    final long timeStamp;
+    private final long timeStamp;
     final String content;
 
     public Message(String content) {
         timeStamp = System.nanoTime();
-        this.content = content;
+        this.content = content.trim();
     }
 
     @Override

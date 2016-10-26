@@ -2,7 +2,9 @@ package com.github.MikeKahn.core;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * Created by Michael on 10/24/2016.
@@ -22,12 +24,20 @@ class Manager {
 
     private HashMap<String, DefaultListModel> activeUsers;
 
+    private HashSet<String> positiveWords;
+
+    private int posMsgCount;
+    private int totalMsgCount;
+
     private Manager() {
         Node rootNode = new Node("Root",null,null);
         activeUsers = new HashMap<>();
         root = new DefaultMutableTreeNode(rootNode); //init root without parent or any children
         rootNode.instance = root;
         groupMap.put(rootNode.id, rootNode);
+        positiveWords = new HashSet<>();
+        posMsgCount = 0;
+        totalMsgCount = 0;
     }
 
     DefaultMutableTreeNode getRoot() {
@@ -86,6 +96,10 @@ class Manager {
         return userMap.containsKey(id);
     }
 
+    void addPositiveWords(String[] words) {
+        positiveWords.addAll(Arrays.asList(words));
+    }
+
     int getTotalUserCount() {
         return userMap.size();
     }
@@ -95,24 +109,24 @@ class Manager {
     }
 
     int getTotalMessageCount() {
-        int count = 0;
-
-        for(User u: userMap.values()) {
-            count += u.getMessages().size();
-        }
-        return count;
+        return totalMsgCount;
     }
 
+    //return pos msg count divided by total as a double resulting in fraction, multiply 100 for percent
     int getPercentPositive() {
-        return 0;
+        return (int)((((double) posMsgCount)/ totalMsgCount) * 100);
     }
 
     void push(User user, Message msg) {
-        //TODO: update all open users feeds that follow this user
-        for (String id: activeUsers.keySet()) {
-            if(user.isFollower(id)) {
-                activeUsers.get(id).addElement(msg);
+        totalMsgCount++; //inc message count
+        String[] split = msg.content.split("\\s+"); //split msg by empty space into array
+        for(String s: split) {
+            if(positiveWords.contains(s)) { //check if word is positive, if so inc
+                posMsgCount++;
             }
         }
+        activeUsers.keySet().stream().filter(user::isFollower).forEachOrdered(id -> {
+            activeUsers.get(id).addElement(msg);
+        });
     }
 }

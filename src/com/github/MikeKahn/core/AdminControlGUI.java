@@ -3,10 +3,7 @@ package com.github.MikeKahn.core;
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreeSelectionModel;
+import javax.swing.tree.*;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -62,7 +59,7 @@ public class AdminControlGUI extends JFrame {
         showUserTotalButton.addActionListener(e -> System.out.println("Total user count: " + Manager.getInstance().getTotalUserCount()));
         showGroupTotalButton.addActionListener(e -> System.out.println("Total group count: " + Manager.getInstance().getTotalGroupCount()));
         showMessageTotalButton.addActionListener(e -> System.out.println("Total message count: " + Manager.getInstance().getTotalMessageCount()));
-        showPositivePercentageButton.addActionListener(e -> System.out.println("Positive message percent: " + Manager.getInstance().getPercentPositive()));
+        showPositivePercentageButton.addActionListener(e -> System.out.println("Positive message percent: " + Manager.getInstance().getPercentPositive() + "%"));
 
         addUserButton.addActionListener(e -> {
             String input = JOptionPane.showInputDialog("Create new user, enter user id below");
@@ -71,6 +68,7 @@ public class AdminControlGUI extends JFrame {
                 try {
                     DefaultMutableTreeNode user = Manager.getInstance().createUser(input, Manager.getInstance().getGroup(groupID).instance);
                     model.insertNodeInto(user, (MutableTreeNode) user.getParent(), user.getParent().getIndex(user));
+                    nodeTree.scrollPathToVisible(new TreePath(user.getPath()));
                     System.out.println("New user created with user id: " + input);
                 } catch(IDTakenException ex) {
                     System.err.println(ex.getMessage());
