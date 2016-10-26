@@ -1,10 +1,8 @@
 package com.github.MikeKahn.core;
 
+import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
-import java.util.ArrayDeque;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Queue;
 
 /**
  * Created by Michael on 10/24/2016.
@@ -22,11 +20,11 @@ class Manager {
 
     private DefaultMutableTreeNode root; //root user group, contains all users and user groups as children
 
-    private HashSet<String> activeUsers;
+    private HashMap<String, DefaultListModel> activeUsers;
 
     private Manager() {
         Node rootNode = new Node("Root",null,null);
-        activeUsers = new HashSet<>();
+        activeUsers = new HashMap<>();
         root = new DefaultMutableTreeNode(rootNode); //init root without parent or any children
         rootNode.instance = root;
         groupMap.put(rootNode.id, rootNode);
@@ -35,9 +33,6 @@ class Manager {
     DefaultMutableTreeNode getRoot() {
         return root;
     }
-    /*void setRoot(DefaultMutableTreeNode node) {
-        root = node;
-    }*/
 
     private Node getObject(DefaultMutableTreeNode node) {
         return (Node)node.getUserObject();
@@ -69,8 +64,26 @@ class Manager {
         }
     }
 
+    boolean userActive(String userID) {
+        return activeUsers.containsKey(userID);
+    }
+
+    void setActive(String userID, DefaultListModel model) {
+        if(userActive(userID)) { //disable if active
+            activeUsers.remove(userID);
+        } else {
+            activeUsers.put(userID, model); //enable if inactive
+        }
+    }
+
     Node getGroup(String id) {
         return (groupMap.containsKey(id)) ? groupMap.get(id) : null;
+    }
+
+    User getUser(String id) {return (userMap.containsKey(id)) ? userMap.get(id) : null;}
+
+    boolean userExists(String id) {
+        return userMap.containsKey(id);
     }
 
     int getTotalUserCount() {
@@ -83,15 +96,9 @@ class Manager {
 
     int getTotalMessageCount() {
         int count = 0;
-        Queue<Node> queue = new ArrayDeque<>();
-        queue.add(getObject(getRoot()));
-        while(!queue.isEmpty()) {
-            Node n = queue.poll();
-            if(n instanceof User) {
-                count += ((User) n).getMessages().size();
-            } else {
-                queue.addAll(n.getChildren());
-            }
+
+        for(User u: userMap.values()) {
+            count += u.getMessages().size();
         }
         return count;
     }
@@ -102,8 +109,10 @@ class Manager {
 
     void push(User user, Message msg) {
         //TODO: update all open users feeds that follow this user
-        for (String id: activeUsers) {
-            System.out.println(id);
+        for (String id: activeUsers.keySet()) {
+            if(user.isFollower(id)) {
+                activeUsers.get(id).addElement(msg);
+            }
         }
     }
 }

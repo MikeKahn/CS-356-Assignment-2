@@ -6,6 +6,7 @@ import javax.swing.text.Document;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreeSelectionModel;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -40,6 +41,7 @@ public class AdminControlGUI extends JFrame {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         add(panelParent); //add form to the frame
         model = new DefaultTreeModel(Manager.getInstance().getRoot());
+        nodeTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         nodeTree.setModel(model);
         nodeTree.addTreeSelectionListener(e -> {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode)nodeTree.getLastSelectedPathComponent();
@@ -96,9 +98,18 @@ public class AdminControlGUI extends JFrame {
 
         openUserViewButton.addActionListener(e -> {
             if(((DefaultMutableTreeNode)nodeTree.getLastSelectedPathComponent()).getUserObject() instanceof User) { //check if last selected item is a user
-                //TODO: open user window
                 User user = (User)((DefaultMutableTreeNode) nodeTree.getLastSelectedPathComponent()).getUserObject();
-                System.out.println(user);
+                if(user == null){
+                    System.err.println("Error: No user selected.");
+                    return;
+                } //return if no user selected
+                if(Manager.getInstance().userActive(user.id)) {
+                    System.err.println("Error: User is already active.");
+                    return;
+                }
+                UserControlGUI userControlGUI = new UserControlGUI(user);
+                Manager.getInstance().setActive(user.id,userControlGUI.getModel());
+                userControlGUI.setVisible(true);
             }
         });
 
