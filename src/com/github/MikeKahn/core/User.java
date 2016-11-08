@@ -43,7 +43,6 @@ public class User extends Node {
             //refresh model view
             DefaultListModel userModel = Manager.getInstance().getActiveUser(this.id);
             userModel.clear(); //clear current view
-            System.out.println(feed);
             for(Message m:feed) { //fill view with feed
                 userModel.addElement(m.toString());
             }
