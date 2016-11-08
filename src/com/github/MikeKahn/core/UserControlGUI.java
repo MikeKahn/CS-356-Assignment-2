@@ -41,7 +41,7 @@ public class UserControlGUI extends JFrame {
 
         listFeed.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         msgModel = new DefaultListModel<>();
-        for(Message m:user.getMessages()) {
+        for(Message m:user.getFeed()) {
             msgModel.addElement(m.toString());
         }
         listFeed.setModel(msgModel);

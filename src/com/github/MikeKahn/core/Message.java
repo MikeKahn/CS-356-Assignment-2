@@ -1,21 +1,26 @@
 package com.github.MikeKahn.core;
 
+import java.sql.Timestamp;
+import java.util.Date;
+
 /**
  * Created by Michael on 10/25/2016.
  *
  */
 public class Message {
 
-    private final long timeStamp;
+    final String timeStamp;
     final String content;
+    final String userID;
 
-    public Message(String content) {
-        timeStamp = System.nanoTime();
+    public Message(User user, String content) {
+        userID = user.id;
+        timeStamp = (new Timestamp((new Date()).getTime())).toString();
         this.content = content.trim();
     }
 
     @Override
     public String toString() {
-        return "[" + timeStamp + "]" + content;
+        return "[" + timeStamp + "][" + userID + "]" + content;
     }
 }

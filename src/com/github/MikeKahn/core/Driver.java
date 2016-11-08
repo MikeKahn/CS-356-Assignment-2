@@ -16,8 +16,6 @@ public class Driver {
             instance.addPositiveWords(positiveWords);
 
             java.awt.EventQueue.invokeLater(() -> new AdminControlGUI().setVisible(true));
-
-
         }
 
 }

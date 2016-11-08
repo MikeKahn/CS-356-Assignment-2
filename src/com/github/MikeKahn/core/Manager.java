@@ -8,7 +8,7 @@ import java.util.HashSet;
 
 /**
  * Created by Michael on 10/24/2016.
- * Singleton
+ *
  */
 class Manager {
     private static Manager ourInstance = new Manager();
@@ -117,6 +117,10 @@ class Manager {
         return (int)((((double) posMsgCount)/ totalMsgCount) * 100);
     }
 
+    DefaultListModel getActiveUser(String id) {
+        return (userActive(id)) ? activeUsers.get(id) : null;
+    }
+
     void push(User user, Message msg) {
         totalMsgCount++; //inc message count
         String[] split = msg.content.split("\\s+"); //split msg by empty space into array
@@ -127,6 +131,8 @@ class Manager {
         }
         activeUsers.keySet().stream().filter(user::isFollower).forEachOrdered(id -> {
             activeUsers.get(id).addElement(msg);
+            userMap.get(id).receiveMessage(msg);
         });
+        activeUsers.get(user.id).addElement(msg); //user should see there own post
     }
 }

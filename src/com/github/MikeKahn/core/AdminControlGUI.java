@@ -95,19 +95,21 @@ public class AdminControlGUI extends JFrame {
         });
 
         openUserViewButton.addActionListener(e -> {
-            if(((DefaultMutableTreeNode)nodeTree.getLastSelectedPathComponent()).getUserObject() instanceof User) { //check if last selected item is a user
-                User user = (User)((DefaultMutableTreeNode) nodeTree.getLastSelectedPathComponent()).getUserObject();
-                if(user == null){
-                    System.err.println("Error: No user selected.");
-                    return;
-                } //return if no user selected
-                if(Manager.getInstance().userActive(user.id)) {
-                    System.err.println("Error: User is already active.");
-                    return;
+            if(nodeTree.getLastSelectedPathComponent() != null) { //check if no item is selected
+                if (((DefaultMutableTreeNode) nodeTree.getLastSelectedPathComponent()).getUserObject() instanceof User) { //check if last selected item is a user
+                    User user = (User) ((DefaultMutableTreeNode) nodeTree.getLastSelectedPathComponent()).getUserObject();
+                    if (user == null) {
+                        System.err.println("Error: No user selected.");
+                        return;
+                    } //return if no user selected
+                    if (Manager.getInstance().userActive(user.id)) {
+                        System.err.println("Error: User is already active.");
+                        return;
+                    }
+                    UserControlGUI userControlGUI = new UserControlGUI(user);
+                    Manager.getInstance().setActive(user.id, userControlGUI.getModel());
+                    userControlGUI.setVisible(true);
                 }
-                UserControlGUI userControlGUI = new UserControlGUI(user);
-                Manager.getInstance().setActive(user.id,userControlGUI.getModel());
-                userControlGUI.setVisible(true);
             }
         });
 
